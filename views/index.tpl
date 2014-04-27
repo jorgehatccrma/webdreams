@@ -12,21 +12,59 @@
     <script src="/static/js/screenfull.min.js"></script>
 
     <link href='https://fonts.googleapis.com/css?family=Playball' rel='stylesheet' type='text/css'/>
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Condensed:400,300,700' rel='stylesheet' type='text/css'/>
+    <link href='https://fonts.googleapis.com/css?family=Amaranth' rel='stylesheet' type='text/css'/>
+
 
 </head>
 <body>
 
-    <div>
+    <div id="inner_container" class="pure-g">
+    <div class="pure-u-1-1">
 
-    <h1>Web Dreams</h1>
 
-        %if not signed_in:
-        <button class="pure-button my_button" onClick="document.location = makeURL('/sign_in')">Sing In on Twitter</button>
-        %else:
-        <h2>Welcome {{username}}</h2>
-        <button class="pure-button my_button" onClick="document.location = makeURL('/sign_out')">Logout</button>
-        <button class="pure-button my_button" onClick="toggleFullscreen()">FS</button>
-        %end
+    %if not signed_in:
+
+            <h1>Web Dreams</h1>
+
+            <button class="pure-button my_button" onClick="document.location = makeURL('/sign_in')">Sing In on Twitter</button>
+            <p class="small_text centered">
+                You'll be directed to Twitter.com to sign with your account. Upon authentication, you will be redirected to this site.
+            </p>
+
+            <p class="small_text centered">
+                This site won't Tweet on your behalf. Your are required to authenticate to access the real-time stream of tweets we will visualize/sonify.
+            </p>
+
+
+    %else:
+
+        <div class="pure-menu pure-menu-open pure-menu-horizontal">
+            <div class="bar-left">
+                <button class="pure-button pure-button-disabled">Welcome {{username}}</button>
+            </div>
+
+            <div class="bar-center">
+                Enter search terms:
+                <input type="text"></input>  <img src="/static/assets/help.png" title"Comma separated list of terms to track (only firts 5 will be considered)"></img>
+                <button class="pure-button" onClick="startStream()">Start</button>
+            </div>
+
+            <div class="bar-right">
+                <button class="pure-button" onClick="document.location = makeURL('/sign_out')">Logout</button>
+                <button class="pure-button" onClick="toggleFullscreen()">Full Screen</button>
+            </div>
+
+        </div>
+
+        <div class="main_canvas"></div>
+
+
+    %end
+
+    </div> <!-- pure-u-1-1 -->
+    </div> <!-- #inner_container -->
+
 
     </div>
 
@@ -43,6 +81,10 @@
         if (screenfull.enabled) {
             screenfull.toggle();
         }
+    }
+
+    function startStream() {
+        // TODO: implement
     }
 
     </script>
