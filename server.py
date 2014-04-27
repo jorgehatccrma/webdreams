@@ -15,121 +15,92 @@ from socketio.namespace import BaseNamespace
 from socketio import socketio_manage
 from socketio.mixins import BroadcastMixin
 
-from bottle import Bottle, request, redirect, static_file, view, run, route
+import bottle
+from beaker.middleware import SessionMiddleware
 
 from TwitterAPI import TwitterAPI
-import twitteroauth as oauth
+import twitteroauth as tauth
 
 import time
 from datetime import datetime
 import re
 
-import json
-
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
 import logging
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.DEBUG)
 
 
-app = Bottle()
+
+session_opts = {
+    'session.type': 'file',
+    'session.cookie_expires': 300,
+    'session.data_dir': './.data',
+    'session.auto': True
+}
 
 PORT = 9000
+app = SessionMiddleware(bottle.app(), session_opts)
 
+consumer_token = tauth.getTwitterConsumerCreds('twitter_consumer.json')
 
-def getTwitterConsumerCreds(filename='twitter_consumer.json'):
-    json_data=open(filename)
-    data = json.load(json_data)
-    json_data.close()
-    return (data.get('consumer_key',''), data.get('consumer_secret',''))
-
-(consumer_key, consumer_secret) = getTwitterConsumerCreds()
-
-
-# BIG HACK!!!
-OA = None
 
 
 ######################################################
 # Bottle server
 ######################################################
 
-@app.error(404)
-@view('error')
+@bottle.error(404)
+@bottle.view('error')
 def error404(error):
     return {'message':'NOTHING FOR YOU HERE!'}
     # pass
 
-@app.route('/static/<path:path>')
+@bottle.route('/static/<path:path>')
 def server_static(path):
-    return static_file(path, root='static')
+    return bottle.static_file(path, root='static')
 
 
-
-# @route('/distance', method='POST')
-# def post_distance():
-#     distance = request.json
-#     GeometryCommNamespace.broadcast('new_distance', distance);
-#     return "Got it! (the distance, I mean)"
-
-
-# @route('/node', method='POST')
-# def post_node():
-#     node = request.json
-#     print node
-#     if not nodeExists(node['ip']):
-#         NODES.append(node)
-#         GeometryCommNamespace.broadcast('new_node', node)
-
-#     return "Got it! (the node, I mean)"
-
-
-
-@app.route('/')  # default method is GET
-@view('index')
+@bottle.route('/')  # default method is GET
+@bottle.view('index')
 def do_root():
     # return {'size':{'width':960, 'height':600}}
     pass
 
 
-@app.route('/sign_in')  # default method is GET
+@bottle.route('/sign_in')  # default method is GET
 def do_sign_in():
     logging.info("Singing in ...")
-    # print self.environ['HTTP_ORIGIN']
-    # print self.environ['bottle.app']
-    # a = self.environ['bottle.app']
-    # print a.get_url('/vis')
-    # print self.environ
-    # callbackURL = self.environ['bottle.app'].get_url('/vis')
-
+    # callbackURL = app.get_url('/vis')
     # FIXME: this is a temporal hack (for some reason get_url doesn't work)
     callbackURL = 'http://127.0.0.1:9000/vis'
 
-    global OA
-    OA = oauth.TwitterOAuth(consumer_key, consumer_secret, callbackURL)
-    url = OA.getAuthURL()
-    print "redirecting to", url
-    redirect(url)
+    session = bottle.request.environ.get('beaker.session')
+    session['request_token'] = tauth.getRequestToken(consumer_token, callbackURL)
+    url = tauth.getAuthURL(session['request_token'])
+    session.save()
+
+    logging.debug("redirecting to %s" % url)
+
+    bottle.redirect(url)
 
 
-@app.route('/vis')  # default method is GET
-@view('vis')
+@bottle.route('/vis')  # default method is GET
+@bottle.view('vis')
 def do_vis():
-    print "GOT A CALL TO VIS!!!"
-    global OA
-    if OA:
-        # print request.query
-        # for k in request.query:
-        #     print k, request.query[k]
+    session = bottle.request.environ.get('beaker.session')
+    if session.has_key('request_token'):
+        access_token = tauth.getAccessToken(consumer_token,
+                                            session['request_token'],
+                                            bottle.request.query['oauth_verifier'])
+        session['access_token'] = access_token
+        session.save()
+        logging.debug("access token:\n%s" % pp.pformat(access_token))
 
-        access_token = OA.getAccessToken(request.query['oauth_verifier'])
+    return {'username':access_token['screen_name']}
 
-        # print "Access Token:"
-        # print "    - oauth_token        = %s" % access_token['oauth_token']
-        # print "    - oauth_token_secret = %s" % access_token['oauth_token_secret']
 
-    pass
 
 ######################################################
 # gevent-socketio stuff
@@ -166,11 +137,11 @@ class TweetsNamespace(BaseNamespace, BroadcastMixin):
 
 
 # hook gevent-socketio to bottle
-@app.route('/socket.io/<path:path>')
+@bottle.route('/socket.io/<path:path>')
 def socketio_service(path):
-    socketio_manage(request.environ,
+    socketio_manage(bottle.request.environ,
                     {'/tweets': TweetsNamespace},
-                    request)
+                    bottle.request)
 
 
 
@@ -344,12 +315,12 @@ def main():
     debug_mode = True;
     reload_mode = True;
 
-    run(app=app,
-        server='geventSocketIO',
-        host='0.0.0.0',
-        port=PORT,
-        debug=debug_mode,
-        reloader=reload_mode)
+    bottle.run(app=app,
+               server='geventSocketIO',
+               host='0.0.0.0',
+               port=PORT,
+               debug=debug_mode,
+               reloader=reload_mode)
 
 
 if __name__ == '__main__':

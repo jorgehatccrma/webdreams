@@ -3,3 +3,5 @@ twitter_consumer.json
 *.pyc
 
 vEnv/
+.cache/
+.data/
