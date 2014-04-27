@@ -1,0 +1,13 @@
+TwitterAPI==2.1.13
+anyjson==0.3.3
+bottle==0.12.6
+gevent==1.0
+gevent-socketio==0.3.6
+gevent-websocket==0.9.3
+greenlet==0.4.2
+httplib2==0.9
+oauth2==1.5.211
+oauthlib==0.6.1
+requests==2.2.1
+requests-oauthlib==0.4.0
+wsgiref==0.1.2

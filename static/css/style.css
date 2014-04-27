@@ -1,0 +1,10 @@
+body {
+    background-color: rgb(203, 203, 201);
+    color: rgb(22, 41, 87);
+    /*color: rgb(28, 30, 20);*/
+    text-align: center;
+}
+
+.my_button {
+    background-color: rgba(190, 153, 32, 1.0);
+}
