@@ -46,7 +46,7 @@
 
             <div class="bar-center">
                 Enter search terms:
-                <input type="text"></input>  <img src="/static/assets/help.png" title"Comma separated list of terms to track (only firts 5 will be considered)"></img>
+                <input type="text" id="search_terms"></input>  <img src="/static/assets/help.png" title"Comma separated list of terms to track (only firts 5 will be considered)"></img>
                 <button class="pure-button" onClick="startStream()">Start</button>
             </div>
 
@@ -59,7 +59,6 @@
 
         <div class="main_canvas"></div>
 
-
     %end
 
     </div> <!-- pure-u-1-1 -->
@@ -68,8 +67,22 @@
 
     </div>
 
+    <script>
 
-    <script type="text/javascript">
+    // Socket.IO stuff
+    var socket = io.connect("/tweets");
+
+    socket.on('hello', function (data) {
+        console.log(data)
+    });
+
+    socket.on('failed_stream', function() {
+        alert('Failed to start twitter stream');
+    });
+
+    socket.on('new_tweet', function (tweet) {
+        console.log(tweet);
+    });
 
     function makeURL(path) {
         if (!window.location.origin)
@@ -84,22 +97,15 @@
     }
 
     function startStream() {
-        // TODO: implement
+        terms = document.getElementById('search_terms').value.split(',');
+        // console.log(terms)
+        socket.emit('start_stream', terms)
     }
 
     </script>
 
 
 
-    <!-- Socket.IO stuff -->
-    <script>
-    var socket = io.connect("/tweets");
-
-    socket.on('hello', function (data) {
-        console.log(data)
-    });
-
-    </script>
 
 
 </body>
