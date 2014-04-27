@@ -64,19 +64,25 @@ def server_static(path):
 
 @bottle.route('/')  # default method is GET
 @bottle.view('index')
-def do_root():
-    # return {'size':{'width':960, 'height':600}}
-    pass
+def index():
+
+    session = bottle.request.environ.get('beaker.session')
+    if not session.has_key('access_token'):
+        return {'signed_in': False}
+
+    return {'signed_in': True,
+            'username':session['access_token']['screen_name']}
 
 
 @bottle.route('/sign_in')  # default method is GET
-def do_sign_in():
+def sign_in():
     logging.info("Singing in ...")
-    # callbackURL = app.get_url('/vis')
-    # FIXME: this is a temporal hack (for some reason get_url doesn't work)
-    callbackURL = 'http://127.0.0.1:9000/vis'
-
     session = bottle.request.environ.get('beaker.session')
+
+    # callbackURL = app.get_url('/twitter_callback')
+    # FIXME: this is a temporal hack (for some reason get_url doesn't work)
+    callbackURL = 'http://127.0.0.1:9000/twitter_callback'
+
     session['request_token'] = tauth.getRequestToken(consumer_token, callbackURL)
     url = tauth.getAuthURL(session['request_token'])
     session.save()
@@ -86,20 +92,30 @@ def do_sign_in():
     bottle.redirect(url)
 
 
-@bottle.route('/vis')  # default method is GET
-@bottle.view('vis')
-def do_vis():
+@bottle.route('/twitter_callback')  # default method is GET
+def twitter_callback():
+
+    # Just make sure that we have a valid session
     session = bottle.request.environ.get('beaker.session')
-    if session.has_key('request_token'):
-        access_token = tauth.getAccessToken(consumer_token,
-                                            session['request_token'],
-                                            bottle.request.query['oauth_verifier'])
-        session['access_token'] = access_token
-        session.save()
-        logging.debug("access token:\n%s" % pp.pformat(access_token))
+    if not session.has_key('request_token'):
+        bottle.redirect('/')
 
-    return {'username':access_token['screen_name']}
 
+    access_token = tauth.getAccessToken(consumer_token,
+                                        session['request_token'],
+                                        bottle.request.query['oauth_verifier'])
+    session['access_token'] = access_token
+    session.save()
+    logging.debug("access token:\n%s" % pp.pformat(access_token))
+
+    bottle.redirect('/')
+
+
+@bottle.route('/sign_out')
+def logout():
+    session = bottle.request.environ.get('beaker.session')
+    session.clear()
+    bottle.redirect('/')
 
 
 ######################################################

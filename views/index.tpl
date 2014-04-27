@@ -5,10 +5,13 @@
  <head>
     <title>Web Dreams</title>
 
-    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/pure-min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
 
     <script src="/static/js/socketio/socket.io.js"></script>
+    <script src="/static/js/screenfull.min.js"></script>
+
+    <link href='https://fonts.googleapis.com/css?family=Playball' rel='stylesheet' type='text/css'/>
 
 </head>
 <body>
@@ -17,7 +20,13 @@
 
     <h1>Web Dreams</h1>
 
-    <button class="pure-button my_button" onClick="document.location = makeURL('/sign_in')">Sing In on Twitter</button>
+        %if not signed_in:
+        <button class="pure-button my_button" onClick="document.location = makeURL('/sign_in')">Sing In on Twitter</button>
+        %else:
+        <h2>Welcome {{username}}</h2>
+        <button class="pure-button my_button" onClick="document.location = makeURL('/sign_out')">Logout</button>
+        <button class="pure-button my_button" onClick="toggleFullscreen()">FS</button>
+        %end
 
     </div>
 
@@ -30,21 +39,12 @@
         return window.location.origin + path
     }
 
-    // function sendDistanceMeasurement() {
-    //     xmlhttp = new XMLHttpRequest();
-    //     var url = makeURL("/distance");
-    //     xmlhttp.open("POST", url, true);
-    //     xmlhttp.setRequestHeader("Content-type", "application/json");
-    //     xmlhttp.onreadystatechange = function () { //Call a function when the state changes.
-    //         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-    //             // console.log("Server says: " + xmlhttp.responseText);
-    //         }
-    //     }
-    //     var parameters = JSON.stringify({"pingerIP":document.getElementById('pinger').value,
-    //                                      "pongerIP":document.getElementById('ponger').value,
-    //                                      "distance":+document.getElementById('distance').value});
-    //     xmlhttp.send(parameters);
-    // }
+    function toggleFullscreen() {
+        if (screenfull.enabled) {
+            screenfull.toggle();
+        }
+    }
+
     </script>
 
 

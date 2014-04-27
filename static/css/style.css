@@ -3,8 +3,10 @@ body {
     color: rgb(22, 41, 87);
     /*color: rgb(28, 30, 20);*/
     text-align: center;
+    font-family: "Playball", serif;
 }
 
 .my_button {
     background-color: rgba(190, 153, 32, 1.0);
+    font-family: sans-serif;
 }
