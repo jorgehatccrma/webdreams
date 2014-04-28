@@ -104,11 +104,13 @@ body,
     font-weight: lighter;
 }
 
+
 .node {
   stroke: #999;
   fill: #fff;
   stroke-width: 2px;
 }
+
 
 .link {
   stroke: #999;
@@ -117,9 +119,17 @@ body,
 }
 
 
+.tweet_rect {
+    border: 1px solid black;
+}
+
 .small_text {
     font-size: 70%;
     font-weight: lighter;
+    width: 250px;
+    display: inline-block;
+    margin: 10px;
+    margin-bottom: 30px;
 }
 
 .centered {

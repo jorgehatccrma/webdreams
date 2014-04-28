@@ -28,7 +28,6 @@
 
             <h1>Web Dreams</h1>
 
-            <button class="pure-button my_button" onClick="document.location = makeURL('/sign_in')">Sing In on Twitter</button>
             <p class="small_text centered">
                 You'll be directed to Twitter.com to sign with your account. Upon authentication, you will be redirected to this site.
             </p>
@@ -37,6 +36,7 @@
                 This site won't Tweet on your behalf. Your are required to authenticate to access the real-time stream of tweets we will visualize/sonify.
             </p>
 
+            <button class="pure-button my_button" onClick="document.location = makeURL('/sign_in')">Sing In on Twitter</button>
 
     %else:
 
@@ -160,11 +160,6 @@
                 .attr("r", 4)
                 .style("stroke", function(d,i) { return color(i); });
 
-            nodg.append("rect")
-                .attr("class", "tweet_rect")
-                .attr("width", "80")
-                .style("fill", "rgba(0,0,0,0.1)");
-
             nodg.append("text")
                 .attr("class", "node_name")
                 .attr("x", 8)
@@ -173,9 +168,11 @@
                 .style("stroke-width", 0)
                 .style("display", "block")
                 .text(function(d) { return d.text; })
-
+                .transition().duration(4500).style("opacity", 0.0)
             // nodg.append("title")
             //     .text(function(d){ return d.text; });
+                .remove();
+
         }
 
         node.enter().append("g")
@@ -186,7 +183,6 @@
         node.select("text")
             .text(function(d) { return d.text; })
             .call(wrap, 100);
-
 
         // node.select("title")
         //     .text(function(d) { return d.text; })

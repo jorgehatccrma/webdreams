@@ -137,6 +137,7 @@ class TweetsNamespace(BaseNamespace, BroadcastMixin):
         session = self.environ.get('beaker.session')
         if not session.has_key('access_token'):
             self.emit('failed_stream')
+            return
         access_token = session['access_token']
         self.tweets = Tweets(consumer_token, access_token)
 
