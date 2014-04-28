@@ -134,16 +134,19 @@ class TweetsNamespace(BaseNamespace, BroadcastMixin):
 
     def initialize(self):
         self.emit('hello', {'msg':'alright!'})
-        # self.spawn(self.job_send_heart_beat)  # this is here just as a reminder on how to spawn "jobs" in gevent-socketio
-
-    def on_start_stream(self, data):
-        logging.info(pprint.pformat(data))
         session = self.environ.get('beaker.session')
         if not session.has_key('access_token'):
             self.emit('failed_stream')
         access_token = session['access_token']
-        tweets = Tweets(consumer_token, access_token)
-        tweets.startStream([t.strip() for t in data], [], self.tweet_callback)
+        self.tweets = Tweets(consumer_token, access_token)
+
+    def on_start_stream(self, data):
+        logging.info(pprint.pformat(data))
+        self.spawn(self.tweets.startStream, [t.strip() for t in data], [], self.tweet_callback)
+
+    def on_stop_stream(self):
+        logging.info("stopping stream ...")
+        self.kill_local_jobs()
 
     def tweet_callback(self, tweet):
         self.emit('new_tweet', tweet)

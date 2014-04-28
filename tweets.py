@@ -47,7 +47,7 @@ class Tweets(object):
         self.consumer_secret = consumer_token['consumer_secret']
         self.access_key = access_token['oauth_token']
         self.access_secret = access_token['oauth_token_secret']
-
+        self.streaming = False
 
 
     def startStream(self, global_keywords, local_keywords, callback):
@@ -78,7 +78,7 @@ class Tweets(object):
                     for tweet in r.get_iterator():
                         if ('id' in tweet) and (tweet['id'] not in receivedTweetIDs):
                             receivedTweetIDs.add(tweet['id'])
-                            self._processTweet(tweet)
+                            # self._processTweet(tweet)
                             callback(tweet)
 
                 elif STATUS_CODE_MESSAGES.has_key(r.status_code):
@@ -111,6 +111,7 @@ class Tweets(object):
 
 
         logging.info("Twitter stream stopped\n")
+
 
 
     # handle an incoming tweet
@@ -164,7 +165,7 @@ class Tweets(object):
             else:
                 print("Global Tweet Received", tweet)
 
-            _printTweet(tweet)
+            # _printTweet(tweet)
 
 
 def _printTweet(tweet):
@@ -174,9 +175,9 @@ def _printTweet(tweet):
         # remove URLs from tweets
         text = re.sub(URL_PATTERN, '', text)
         if ('user' in tweet) and ('screen_name' in tweet['user']):
-            logging.info("Got tweet from '" + tweet['user']['screen_name'].encode('utf-8') + "' : " + text + "\n")
+            logging.debug("Got tweet from '" + tweet['user']['screen_name'].encode('utf-8') + "' : " + text + "\n")
         else:
-            logging.info("Got tweet from <anonymous> : " + text + "\n")
+            logging.debug("Got tweet from <anonymous> : " + text + "\n")
 
 
 

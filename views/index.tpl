@@ -51,7 +51,7 @@
             <div class="bar-center">
                 Enter search terms:
                 <input type="text" id="search_terms"></input>  <img src="/static/assets/help.png" title"Comma separated list of terms to track (only firts 5 will be considered)"></img>
-                <button class="pure-button" onClick="startStream()">Start</button>
+                <button class="pure-button" id="startStopBtn" onClick="startStream()">Start</button>
             </div>
 
             <div class="bar-right">
@@ -102,10 +102,22 @@
         }
     }
 
+    isStreaming = false;
     function startStream() {
-        terms = document.getElementById('search_terms').value.split(',');
-        // console.log(terms)
-        socket.emit('start_stream', terms)
+        var btn = document.getElementById('startStopBtn');
+        if (!isStreaming) {
+            console.log("starting stream");
+            terms = document.getElementById('search_terms').value.split(',');
+            // console.log(terms)
+            isStreaming = true;
+            btn.innerHTML = "Stop";
+            socket.emit('start_stream', terms)
+        } else {
+            console.log("stopping stream");
+            isStreaming = false;
+            btn.innerHTML = "Start";
+            socket.emit('stop_stream')
+        }
     }
 
     var width = 800;
@@ -145,20 +157,26 @@
 
         create_node = function(nodg) {
             nodg.append("circle")
-                .attr("r", 12)
+                .attr("r", 4)
                 .style("stroke", function(d,i) { return color(i); });
+
+            nodg.append("rect")
+                .attr("class", "tweet_rect")
+                .attr("width", "80")
+                .style("fill", "rgba(0,0,0,0.1)");
 
             nodg.append("text")
                 .attr("class", "node_name")
-                .attr("x", 16)
+                .attr("x", 8)
                 .attr("dy", ".35em")
                 .style("fill", function(d,i) { return color(i); })
                 .style("stroke-width", 0)
                 .style("display", "block")
-                .text(function(d) { return "<placeholder>"; });
+                .text(function(d) { return d.text; })
+                .call(wrap, 100);
 
-            node.append("title")
-                .text(function(d){ return "<placeholder>"; });
+            // nodg.append("title")
+            //     .text(function(d){ return d.text; });
         }
 
         node.enter().append("g")
@@ -167,10 +185,10 @@
                     .call(create_node);
 
         node.select("text")
-            .text(function(d) { return "<placeholder>"; })
+            .text(function(d) { return d.text; })
 
-        node.select("title")
-            .text(function(d) { return "<placeholder>"; })
+        // node.select("title")
+        //     .text(function(d) { return d.text; })
 
         node.exit().remove();
 
@@ -186,6 +204,29 @@
         force.start();
     }
 
+    function wrap(text, width) {
+        text.each(function() {
+            var text = d3.select(this),
+                words = text.text().split(/\s+/).reverse(),
+                word,
+                line = [],
+                lineNumber = 0,
+                lineHeight = 1.1, // ems
+                y = text.attr("y"),
+                dy = parseFloat(text.attr("dy")),
+                tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+            while (word = words.pop()) {
+                line.push(word);
+                tspan.text(line.join(" "));
+                if (tspan.node().getComputedTextLength() > width) {
+                    line.pop();
+                    tspan.text(line.join(" "));
+                    line = [word];
+                    tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+                }
+            }
+        });
+    }
 
     </script>
 
