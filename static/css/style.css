@@ -107,7 +107,7 @@ body,
 .node {
   stroke: #999;
   fill: #fff;
-  stroke-width: 4px;
+  stroke-width: 2px;
 }
 
 .link {

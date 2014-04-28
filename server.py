@@ -146,6 +146,7 @@ class TweetsNamespace(BaseNamespace, BroadcastMixin):
 
     def on_stop_stream(self):
         logging.info("stopping stream ...")
+        self.tweets.stopStream()
         self.kill_local_jobs()
 
     def tweet_callback(self, tweet):

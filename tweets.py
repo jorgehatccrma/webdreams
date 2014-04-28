@@ -1,6 +1,7 @@
-import time
 from datetime import datetime
+import time
 import re
+import pprint
 
 from TwitterAPI import TwitterAPI
 
@@ -62,11 +63,12 @@ class Tweets(object):
 
         receivedTweetIDs = set([])
 
-        while True:
+        self.streaming = True
+        while self.streaming:
             try:
-                logging.info("Starting connection ...\n")
 
                 terms = set(self.global_keywords + self.local_keywords)
+                logging.info("Starting connection with terms: \n" + pprint.pformat(terms))
                 api = TwitterAPI(self.consumer_key, self.consumer_secret,
                                  self.access_key, self.access_secret)
                 r = api.request('statuses/filter', {'track':','.join(terms)})
@@ -112,6 +114,9 @@ class Tweets(object):
 
         logging.info("Twitter stream stopped\n")
 
+
+    def stopStream(self):
+        self.streaming = False
 
 
     # handle an incoming tweet
