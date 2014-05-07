@@ -1,3 +1,4 @@
+Beaker==1.6.4
 TwitterAPI==2.1.13
 anyjson==0.3.3
 bottle==0.12.6

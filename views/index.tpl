@@ -20,25 +20,45 @@
 </head>
 <body>
 
-    <div id="inner_container" class="pure-g">
-    <div class="pure-u-1-1">
+    <div id="inner_container" class="pure-g-r">
 
 
     %if not signed_in:
 
-            <h1>Web Dreams</h1>
 
+    <div class="pure-u-1-1">
+            <h1>Web Dreams</h1>
+    </div> <!-- pure-u-1-1 -->
+
+    <div class="pure-u-1-5"></div>
+
+
+    <div class="pure-u-1-5">
             <p class="small_text centered">
                 You'll be directed to Twitter.com to sign with your account. Upon authentication, you will be redirected to this site.
             </p>
+    </div>
 
+
+    <div class="pure-u-1-5">
+            <button class="pure-button my_button" onClick="document.location = makeURL('/sign_in')">Sing In on Twitter</button>
+    </div>
+
+
+    <div class="pure-u-1-5">
             <p class="small_text centered">
                 This site won't Tweet on your behalf. Your are required to authenticate to access the real-time stream of tweets we will visualize/sonify.
             </p>
+    </div>
 
-            <button class="pure-button my_button" onClick="document.location = makeURL('/sign_in')">Sing In on Twitter</button>
+    <div class="pure-u-1-5"></div>
+
+
 
     %else:
+
+
+    <div class="pure-u-1-1">
 
         <div class="pure-menu pure-menu-open pure-menu-horizontal">
 
@@ -63,9 +83,12 @@
 
         <div class="main_canvas"><svg id="svg_canvas"></svg></div>
 
+    </div> <!-- pure-u-1-1 -->
+
+
     %end
 
-    </div> <!-- pure-u-1-1 -->
+
     </div> <!-- #inner_container -->
 
 

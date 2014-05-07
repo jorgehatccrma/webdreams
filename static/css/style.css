@@ -126,10 +126,6 @@ body,
 .small_text {
     font-size: 70%;
     font-weight: lighter;
-    width: 250px;
-    display: inline-block;
-    margin: 10px;
-    margin-bottom: 30px;
 }
 
 .centered {
