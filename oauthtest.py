@@ -7,8 +7,8 @@ import urlparse
 
 # Initialize the OAuth Client
 
-consumer_key = '1i1gRTTJMkiw448pUjhDRown3'
-consumer_secret = 'BvPP3KDKwakVFFbGCYXJCm1n6z7xGP9HWJ0r39SLVpYmkWE4k0'
+consumer_key = ''
+consumer_secret = ''
 consumer = oauth.Consumer(consumer_key, consumer_secret)
 client = oauth.Client(consumer)
 
