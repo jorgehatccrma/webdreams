@@ -8,9 +8,10 @@
     <link rel="stylesheet" href="/static/css/pure-min.css">
     <link rel="stylesheet" type="text/css" href="/static/css/style.css">
 
-    <link href='https://fonts.googleapis.com/css?family=Playball' rel='stylesheet' type='text/css'/>
     <link href='https://fonts.googleapis.com/css?family=Roboto+Condensed:400,300,700' rel='stylesheet' type='text/css'/>
     <link href='https://fonts.googleapis.com/css?family=Amaranth' rel='stylesheet' type='text/css'/>
+    <link href="http://fonts.googleapis.com/css?family=Permanent+Marker" rel="stylesheet" type="text/css"/>
+    <link href="http://fonts.googleapis.com/css?family=Paprika" rel="stylesheet" type="text/css"/>
 
     <script src="/static/js/socketio/socket.io.js"></script>
     <script src="/static/js/screenfull.min.js"></script>
@@ -64,7 +65,7 @@
 
             <div class="bar-left">
                 <h1 style="display: inline; font-size: 120%; padding: 5px 5px 10px 20px;">Web Dreams</h1>by
-                <h1 style="display: inline; font-size: 100%; padding: 5px 20px 10px 5px;">{{username}}</h1>
+                <h2 style="display: inline; font-size: 100%; padding: 5px 20px 10px 5px;">{{username}}</h2>
                 <!-- <button class="pure-button pure-button-disabled">Welcome {{username}}</button> -->
             </div>
 
